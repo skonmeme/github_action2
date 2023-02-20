@@ -1,0 +1,30 @@
+name: PR test
+
+on:
+  pull_request:
+    branches: 
+      - 'main'
+      - 'releases/**'
+      - 'develop'
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-nothing
+          path: |
+            ~/build
+      - name: test nothing
+        run: |
+          mkdir -p ~/build
+          touch ~/build/test_report
+          if [ `wc -l ~/build/test_report | awk '{print $1}'` -gt 5 ]; then 
+            echo "do nothing" > ~/build/test_report
+          else 
+            echo "do nothing" >> ~/build/test_report
+          fi
+          cat ~/build/test_report
