@@ -3,7 +3,7 @@ name: Create release
 on:
   push:
     tags: 
-      - '*'
+      - 'v*'
     branches: 
       - 'main'
 
@@ -14,15 +14,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      - name: Version
+        id: version
+        run: |
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+          # echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Build
+        run: |
+          mkdir -p ~/build
+          tar cvfz ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz $GITHUB_WORKSPACE/src
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-          draft: false
-          prerelease: false
-          
+          body_path: CHANGELOG.md
+          files: |
+            ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz
