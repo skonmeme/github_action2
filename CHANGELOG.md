@@ -1,5 +1,9 @@
 # github_action2
 
+## Second release
+
+* Update creation of release
+
 ## First release
 
 * Test codes for Pull-request
