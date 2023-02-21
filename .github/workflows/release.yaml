@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p ~/build
-          tar cvfz ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz ~/src
+          tar cvfz ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz $GITHUB_WORKSPACE/src
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
