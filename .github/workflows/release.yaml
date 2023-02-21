@@ -15,14 +15,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Version
+        id: version
+        run: |
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
       - name: Build
         run: |
           mkdir -p ~/build
-          tar cvfz ~/build/github_action2-${{ github.ref }}.tar.gz ~/src
+          tar cvfz ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz ~/src
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: CHANGELOG.md
           files: |
-            ~/build/github_action2-${{ github.ref }}.tar.gz
+            ~/build/github_action2-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz
